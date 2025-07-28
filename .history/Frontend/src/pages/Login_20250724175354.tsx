@@ -1,0 +1,13 @@
+import { Input } from "../components/inputs"
+
+export function Login() {
+    return (
+        <div>
+            <h1>Login</h1>
+            <label
+            <Input type="text" label="Username" required/>
+            <Input type="password" label="Password" required/>
+        </div>
+    )
+}
+        

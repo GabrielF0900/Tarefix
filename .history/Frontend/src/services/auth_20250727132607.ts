@@ -1,0 +1,1 @@
+//Aqui vamos o algoritmo de configuração 
