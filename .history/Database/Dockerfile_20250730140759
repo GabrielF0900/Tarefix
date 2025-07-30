@@ -6,4 +6,4 @@ ENV POSTGRES_PASSWORD=postgres
 ENV POSTGRES_DB=tarefix
 
 EXPOSE 9000
-CMD [ "postgres" ]
+CMD [ "executable" ]
