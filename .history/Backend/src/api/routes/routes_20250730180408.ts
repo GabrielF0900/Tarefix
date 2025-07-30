@@ -8,8 +8,8 @@ import { Router } from "express";
 const router = Router();
 
 router.post("/api/auth/register", registerUser);
-router.post("/api/auth/nova-tarefa", novaTarefa);
-router.post("/api/auth/login", login);
+router.post("/auth/nova-tarefa", novaTarefa);
+router.post("/auth/login", login);
 
 
 router.get("/tarefas", listarTarefas);
