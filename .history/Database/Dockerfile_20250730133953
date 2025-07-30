@@ -1,0 +1,6 @@
+FROM postgres:15
+
+# Define variáveis de ambiente padrão (podem ser sobrescritas via docker run ou docker-compose)
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=postgres
+ENV POSTGRES_DB=tarefix
