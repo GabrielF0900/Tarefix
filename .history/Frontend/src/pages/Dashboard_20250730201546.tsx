@@ -252,7 +252,8 @@ function getDataVencimento(task: { dueDate?: string; date?: string }) {
             dueDate: getDataVencimento(atividadeSelecionada)
           }}
           // Corrige o endpoint de atualização dentro do modal de edição
-          onAtividadeAtualizada={() => {
+          onAtividadeAtualizada={async (dadosAtualizados: Tarefa) => {
+            await api.put(`/auth/tarefas/${atividadeSelecionada.id}`, dadosAtualizados);
             fetchTarefas();
           }}
         />
