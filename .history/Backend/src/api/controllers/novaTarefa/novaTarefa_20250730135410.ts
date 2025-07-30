@@ -47,21 +47,21 @@ export async function novaTarefa(req: Request, res: Response): Promise<void> {
   }
 
   // Mapeamento dos enums para o formato do Prisma
-  const statusMap: Record<string, string> = {
-    'Pendente': 'Pendente',
-    'Em Progresso': 'Em_Andamento',
-    'Em_Andamento': 'Em_Andamento',
-    'Concluída': 'Concluida',
-    'Concluida': 'Concluida'
+  const statusMap: Record<string, Status> = {
+    'Pendente': Status.Pendente,
+    'Em Progresso': Status.Em_Andamento,
+    'Em_Andamento': Status.Em_Andamento,
+    'Concluída': Status.Concluida,
+    'Concluida': Status.Concluida
   };
-  const priorityMap: Record<string, string> = {
-    'Alta': 'Alta',
-    'Média': 'Media',
-    'Media': 'Media',
-    'Baixa': 'Baixa'
+  const priorityMap: Record<string, Priority> = {
+    'Alta': Priority.Alta,
+    'Média': Priority.Media,
+    'Media': Priority.Media,
+    'Baixa': Priority.Baixa
   };
-  const prismaStatus: string = statusMap[finalStatus] || 'Pendente';
-  const prismaPriority: string = priorityMap[finalPriority] || 'Baixa';
+  const prismaStatus: Status = statusMap[finalStatus] || Status.Pendente;
+  const prismaPriority: Priority = priorityMap[finalPriority] || Priority.Baixa;
 
   // Conversão da data
   let prismaDate: Date | undefined = undefined;
@@ -81,8 +81,8 @@ export async function novaTarefa(req: Request, res: Response): Promise<void> {
       data: {
         title: finalTitle,
         description: finalDescription,
-        status: prismaStatus as any,
-        priority: prismaPriority as any,
+        status: prismaStatus,
+        priority: prismaPriority,
         ...(prismaDate ? { date: prismaDate } : {}),
         createdAt: new Date(),
         user: { connect: { id: userId } },

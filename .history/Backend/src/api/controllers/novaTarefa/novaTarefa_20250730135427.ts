@@ -81,8 +81,8 @@ export async function novaTarefa(req: Request, res: Response): Promise<void> {
       data: {
         title: finalTitle,
         description: finalDescription,
-        status: prismaStatus as any,
-        priority: prismaPriority as any,
+        status: prismaStatus,
+        priority: prismaPriority,
         ...(prismaDate ? { date: prismaDate } : {}),
         createdAt: new Date(),
         user: { connect: { id: userId } },
