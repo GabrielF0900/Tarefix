@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import api from '../services/api';
-import { AxiosError } from 'axios';
 
 interface Props {
   isOpen: boolean;
@@ -19,63 +18,70 @@ const NovaTarefaModal: React.FC<Props> = ({ isOpen, onClose, onTarefaCriada }) =
 
   if (!isOpen) return null;
 
+  const normalizarStatus = (s: string) => {
+    switch (s) {
+      case "Em Progresso":
+        return "Em_Andamento";
+      case "Concluída":
+        return "Concluida";
+      default:
+        return "Pendente";
+    }
+  };
+
+  const normalizarPrioridade = (p: string) => {
+    switch (p) {
+      case "Média":
+        return "Media";
+      default:
+        return p;
+    }
+  };
+
   const handleCriar = async () => {
     setErro("");
     setLoading(true);
+
     try {
-      // Recupera o userId do localStorage (ajuste conforme seu app)
-          const userId = localStorage.getItem("userId");
+      const userId = localStorage.getItem("userId");
       if (!userId) {
         setErro("Usuário não identificado.");
         setLoading(false);
         return;
       }
-      // Normaliza status e prioridade para o backend aceitar
-      let statusBackend = status;
-      if (status === 'Em Progresso') statusBackend = 'Em_Andamento';
-      if (status === 'Concluída') statusBackend = 'Concluida';
-      let prioridadeBackend = prioridade;
-      if (prioridade === 'Média') prioridadeBackend = 'Media';
-      const payload: {
-        title: string;
-        description: string;
-        status: string;
-        priority: string;
-        userId: string;
-        date?: string;
-        dataVencimento?: string;
-        dueDate?: string;
-      } = {
+
+      const payload = {
         title: titulo,
         description: descricao,
-        status: statusBackend,
-        priority: prioridadeBackend,
-        userId: userId
+        status: normalizarStatus(status),
+        priority: normalizarPrioridade(prioridade),
+        userId,
+        dueDate: dataVencimento ? new Date(dataVencimento).toISOString() : undefined,
       };
-          if (dataVencimento) {
-            // Corrige fuso: cria data local sem deslocamento de timezone
-            const [year, month, day] = dataVencimento.split('-').map(Number);
-            const localDate = new Date(year, month - 1, day, 12, 0, 0); // 12h para evitar problemas de horário de verão
-            const isoDate = localDate.toISOString();
-            payload.date = isoDate;
-            payload.dataVencimento = isoDate;
-            payload.dueDate = isoDate;
-          }
+
       await api.post("/auth/nova-tarefa", payload);
+
+      // Resetar formulário
       setTitulo("");
       setDescricao("");
       setStatus("Pendente");
       setPrioridade("Baixa");
       setDataVencimento("");
+
       if (onTarefaCriada) onTarefaCriada();
-    } catch (err) {
-      const axiosError = err as AxiosError<{ error?: string }>;
-      if (axiosError.response && axiosError.response.data && axiosError.response.data.error) {
-        setErro(axiosError.response.data.error);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        const axiosError = err as any;
+        if (axiosError.response?.data?.error) {
+          setErro(axiosError.response.data.error);
+        } else {
+          setErro("Erro ao criar tarefa.");
+        }
       } else {
-        setErro("Erro ao criar tarefa.");
+        setErro("Erro inesperado.");
       }
     }
+
     setLoading(false);
   };
 
@@ -108,7 +114,7 @@ const NovaTarefaModal: React.FC<Props> = ({ isOpen, onClose, onTarefaCriada }) =
               onChange={e => setDescricao(e.target.value)}
               className="w-full px-3 py-2 bg-gray-800 text-white rounded border border-gray-700 resize-none h-24 focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={loading}
-            ></textarea>
+            />
           </div>
 
           <div className="flex gap-4">
@@ -152,9 +158,16 @@ const NovaTarefaModal: React.FC<Props> = ({ isOpen, onClose, onTarefaCriada }) =
             />
           </div>
 
-          {erro && <div className="text-red-400 text-sm mb-2">{erro}</div>}
+          {erro && <div className="text-red-400 text-sm">{erro}</div>}
+
           <div className="flex justify-end gap-2 mt-4">
-            <button onClick={onClose} className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded" disabled={loading}>Cancelar</button>
+            <button
+              onClick={onClose}
+              className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded"
+              disabled={loading}
+            >
+              Cancelar
+            </button>
             <button
               onClick={handleCriar}
               className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded"

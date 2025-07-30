@@ -26,12 +26,6 @@ function CardResumo({ titulo, valor, Icon }: CardResumoProps) {
 export function Dashboard() {
   const [userEmail, setUserEmail] = useState<string>("");
   const [mostrarModal, setMostrarModal] = useState(false);
-  // Função de logout
-  function handleLogout() {
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("userId");
-    window.location.href = "/login";
-  }
   type Tarefa = {
     id: string;
     title: string;
@@ -39,15 +33,9 @@ export function Dashboard() {
     status: 'Pendente' | 'Em Progresso' | 'Concluída';
     priority: 'Baixa' | 'Média' | 'Alta';
     createdAt: string;
-    dueDate?: string;
-    date?: string;
+    dueDate: string;
     // outros campos se necessário
   };
-
-// Função utilitária para pegar a data de vencimento, seja 'dueDate' ou 'date'
-function getDataVencimento(task: { dueDate?: string; date?: string }) {
-  return task.dueDate ? task.dueDate : (task.date ? task.date : '');
-}
   // Tipo intermediário para dados crus do backend
   type TarefaBackend = Omit<Tarefa, 'status' | 'priority'> & {
     status: string;
@@ -123,13 +111,6 @@ function getDataVencimento(task: { dueDate?: string; date?: string }) {
           <span className="text-base flex items-center gap-1">
             <span className="hidden md:inline">&#128100;</span> {userEmail}
           </span>
-          <button
-            onClick={handleLogout}
-            className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded border border-gray-600 font-semibold transition text-sm ml-2"
-            title="Sair da conta"
-          >
-            Logout
-          </button>
         </div>
       </header>
 
@@ -213,9 +194,13 @@ function getDataVencimento(task: { dueDate?: string; date?: string }) {
                   )}
                   {getDataVencimento(task) && (
                     <span className="text-gray-400 flex items-center gap-1">
-                      &#128197; {new Date(getDataVencimento(task)).toLocaleDateString('pt-BR')}
+                      &#128197; {new Date(getDataVencimento(task)!).toLocaleDateString('pt-BR')}
                     </span>
                   )}
+// Função utilitária para pegar a data de vencimento, seja 'dueDate' ou 'date'
+function getDataVencimento(task: { dueDate?: string; date?: string }) {
+  return task.dueDate || task.date || '';
+}
                 </div>
               </div>
               <div className="flex gap-2 mt-4 md:mt-0">
@@ -246,10 +231,7 @@ function getDataVencimento(task: { dueDate?: string; date?: string }) {
         <EditarAtividadeModal
           isOpen={modalEditarAberto}
           onClose={() => setModalEditarAberto(false)}
-          atividade={{
-            ...atividadeSelecionada,
-            dueDate: getDataVencimento(atividadeSelecionada)
-          }}
+          atividade={atividadeSelecionada}
           onAtividadeAtualizada={fetchTarefas}
         />
       )}

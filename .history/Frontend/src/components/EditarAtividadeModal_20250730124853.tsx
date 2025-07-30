@@ -35,13 +35,7 @@ const EditarAtividadeModal: React.FC<Props> = ({ isOpen, onClose, atividade, onA
       setDescricao(atividade.description || '');
       setPrioridade(atividade.priority || 'Baixa');
       setStatus(atividade.status || 'Pendente');
-      // Converter ISO para yyyy-MM-dd para o input type="date"
-      let data = '';
-      if (atividade.dueDate) {
-        const d = new Date(atividade.dueDate);
-        data = d.toISOString().slice(0, 10);
-      }
-      setDataVencimento(data);
+      setDataVencimento(atividade.dueDate || '');
     }
     if (!isOpen) {
       setErro('');
@@ -77,10 +71,7 @@ const EditarAtividadeModal: React.FC<Props> = ({ isOpen, onClose, atividade, onA
         status: statusBackend
       };
       if (dataVencimento) {
-        // Corrige fuso: cria data local sem deslocamento de timezone
-        const [year, month, day] = dataVencimento.split('-').map(Number);
-        const localDate = new Date(year, month - 1, day, 12, 0, 0); // 12h para evitar problemas de horário de verão
-        const isoDate = localDate.toISOString();
+        const isoDate = new Date(dataVencimento).toISOString();
         payload.date = isoDate;
         payload.dataVencimento = isoDate;
         payload.dueDate = isoDate;

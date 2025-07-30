@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import api from '../services/api';
-import { AxiosError } from 'axios';
 
 interface Props {
   isOpen: boolean;
@@ -24,43 +23,20 @@ const NovaTarefaModal: React.FC<Props> = ({ isOpen, onClose, onTarefaCriada }) =
     setLoading(true);
     try {
       // Recupera o userId do localStorage (ajuste conforme seu app)
-          const userId = localStorage.getItem("userId");
+      const userId = localStorage.getItem("userId");
       if (!userId) {
         setErro("Usuário não identificado.");
         setLoading(false);
         return;
       }
-      // Normaliza status e prioridade para o backend aceitar
-      let statusBackend = status;
-      if (status === 'Em Progresso') statusBackend = 'Em_Andamento';
-      if (status === 'Concluída') statusBackend = 'Concluida';
-      let prioridadeBackend = prioridade;
-      if (prioridade === 'Média') prioridadeBackend = 'Media';
-      const payload: {
-        title: string;
-        description: string;
-        status: string;
-        priority: string;
-        userId: string;
-        date?: string;
-        dataVencimento?: string;
-        dueDate?: string;
-      } = {
+      const payload: any = {
         title: titulo,
         description: descricao,
-        status: statusBackend,
-        priority: prioridadeBackend,
-        userId: userId
+        status,
+        priority: prioridade,
+        userId: Number(userId)
       };
-          if (dataVencimento) {
-            // Corrige fuso: cria data local sem deslocamento de timezone
-            const [year, month, day] = dataVencimento.split('-').map(Number);
-            const localDate = new Date(year, month - 1, day, 12, 0, 0); // 12h para evitar problemas de horário de verão
-            const isoDate = localDate.toISOString();
-            payload.date = isoDate;
-            payload.dataVencimento = isoDate;
-            payload.dueDate = isoDate;
-          }
+      if (dataVencimento) payload.date = dataVencimento;
       await api.post("/auth/nova-tarefa", payload);
       setTitulo("");
       setDescricao("");
@@ -68,13 +44,8 @@ const NovaTarefaModal: React.FC<Props> = ({ isOpen, onClose, onTarefaCriada }) =
       setPrioridade("Baixa");
       setDataVencimento("");
       if (onTarefaCriada) onTarefaCriada();
-    } catch (err) {
-      const axiosError = err as AxiosError<{ error?: string }>;
-      if (axiosError.response && axiosError.response.data && axiosError.response.data.error) {
-        setErro(axiosError.response.data.error);
-      } else {
-        setErro("Erro ao criar tarefa.");
-      }
+    } catch {
+      setErro("Erro ao criar tarefa.");
     }
     setLoading(false);
   };

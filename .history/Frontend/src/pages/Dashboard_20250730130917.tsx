@@ -30,7 +30,7 @@ export function Dashboard() {
   function handleLogout() {
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userId");
-    window.location.href = "/login";
+    window.location.reload();
   }
   type Tarefa = {
     id: string;

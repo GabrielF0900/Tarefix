@@ -26,12 +26,6 @@ function CardResumo({ titulo, valor, Icon }: CardResumoProps) {
 export function Dashboard() {
   const [userEmail, setUserEmail] = useState<string>("");
   const [mostrarModal, setMostrarModal] = useState(false);
-  // Função de logout
-  function handleLogout() {
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("userId");
-    window.location.href = "/login";
-  }
   type Tarefa = {
     id: string;
     title: string;
@@ -39,15 +33,9 @@ export function Dashboard() {
     status: 'Pendente' | 'Em Progresso' | 'Concluída';
     priority: 'Baixa' | 'Média' | 'Alta';
     createdAt: string;
-    dueDate?: string;
-    date?: string;
+    dueDate: string;
     // outros campos se necessário
   };
-
-// Função utilitária para pegar a data de vencimento, seja 'dueDate' ou 'date'
-function getDataVencimento(task: { dueDate?: string; date?: string }) {
-  return task.dueDate ? task.dueDate : (task.date ? task.date : '');
-}
   // Tipo intermediário para dados crus do backend
   type TarefaBackend = Omit<Tarefa, 'status' | 'priority'> & {
     status: string;
@@ -70,25 +58,13 @@ function getDataVencimento(task: { dueDate?: string; date?: string }) {
     try {
       const res = await api.get('/tarefas');
       // Normaliza status para exibição correta
-      const normalizadas = (res.data as TarefaBackend[]).map((t): Tarefa => {
-        let status: Tarefa['status'];
-        if (t.status === 'Concluida') status = 'Concluída';
-        else if (t.status === 'Em_Andamento') status = 'Em Progresso';
-        else if (t.status === 'Pendente') status = 'Pendente';
-        else status = 'Pendente';
-
-        let priority: Tarefa['priority'];
-        if (t.priority === 'Media') priority = 'Média';
-        else if (t.priority === 'Baixa') priority = 'Baixa';
-        else if (t.priority === 'Alta') priority = 'Alta';
-        else priority = 'Baixa';
-
-        return {
-          ...t,
-          status,
-          priority
-        };
-      });
+      const normalizadas = (res.data as TarefaBackend[]).map((t): Tarefa => ({
+        ...t,
+        status: t.status === 'Concluida' ? 'Concluída'
+          : t.status === 'Em_Andamento' ? 'Em Progresso'
+          : t.status,
+        priority: t.priority === 'Media' ? 'Média' : t.priority
+      }));
       setTasks(normalizadas);
     } catch {
       setTasks([]);
@@ -123,13 +99,6 @@ function getDataVencimento(task: { dueDate?: string; date?: string }) {
           <span className="text-base flex items-center gap-1">
             <span className="hidden md:inline">&#128100;</span> {userEmail}
           </span>
-          <button
-            onClick={handleLogout}
-            className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded border border-gray-600 font-semibold transition text-sm ml-2"
-            title="Sair da conta"
-          >
-            Logout
-          </button>
         </div>
       </header>
 
@@ -211,9 +180,9 @@ function getDataVencimento(task: { dueDate?: string; date?: string }) {
                   {task.status === 'Pendente' && (
                     <span className="bg-yellow-400 text-black px-2 py-1 rounded text-xs">Pendente</span>
                   )}
-                  {getDataVencimento(task) && (
+                  {task.createdAt && (
                     <span className="text-gray-400 flex items-center gap-1">
-                      &#128197; {new Date(getDataVencimento(task)).toLocaleDateString('pt-BR')}
+                      &#128197; {new Date(task.createdAt).toLocaleDateString('pt-BR')}
                     </span>
                   )}
                 </div>
@@ -246,10 +215,7 @@ function getDataVencimento(task: { dueDate?: string; date?: string }) {
         <EditarAtividadeModal
           isOpen={modalEditarAberto}
           onClose={() => setModalEditarAberto(false)}
-          atividade={{
-            ...atividadeSelecionada,
-            dueDate: getDataVencimento(atividadeSelecionada)
-          }}
+          atividade={atividadeSelecionada}
           onAtividadeAtualizada={fetchTarefas}
         />
       )}

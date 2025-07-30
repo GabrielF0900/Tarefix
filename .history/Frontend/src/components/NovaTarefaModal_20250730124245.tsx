@@ -24,7 +24,7 @@ const NovaTarefaModal: React.FC<Props> = ({ isOpen, onClose, onTarefaCriada }) =
     setLoading(true);
     try {
       // Recupera o userId do localStorage (ajuste conforme seu app)
-          const userId = localStorage.getItem("userId");
+      const userId = localStorage.getItem("userId");
       if (!userId) {
         setErro("Usuário não identificado.");
         setLoading(false);
@@ -52,15 +52,13 @@ const NovaTarefaModal: React.FC<Props> = ({ isOpen, onClose, onTarefaCriada }) =
         priority: prioridadeBackend,
         userId: userId
       };
-          if (dataVencimento) {
-            // Corrige fuso: cria data local sem deslocamento de timezone
-            const [year, month, day] = dataVencimento.split('-').map(Number);
-            const localDate = new Date(year, month - 1, day, 12, 0, 0); // 12h para evitar problemas de horário de verão
-            const isoDate = localDate.toISOString();
-            payload.date = isoDate;
-            payload.dataVencimento = isoDate;
-            payload.dueDate = isoDate;
-          }
+      if (dataVencimento) {
+        // Envia data no formato ISO para o backend, com todos os nomes possíveis
+        const isoDate = new Date(dataVencimento).toISOString();
+        payload.date = isoDate;
+        payload.dataVencimento = isoDate;
+        payload.dueDate = isoDate;
+      }
       await api.post("/auth/nova-tarefa", payload);
       setTitulo("");
       setDescricao("");
