@@ -56,10 +56,9 @@ export async function novaTarefa(req: Request, res: Response): Promise<void> {
   const finalDate = dataVencimento || dueDate || date;
 
   if (![finalTitle, finalDescription, finalPriority, finalStatus, userId].every(Boolean)) {
-    res.status(400).json({
+    return res.status(400).json({
       error: "Todos os campos são obrigatórios, incluindo o userId.",
     });
-    return;
   }
 
   // Mapeamento seguro para enums do Prisma
@@ -85,8 +84,7 @@ export async function novaTarefa(req: Request, res: Response): Promise<void> {
   if (finalDate) {
     const d = new Date(finalDate);
     if (isNaN(d.getTime())) {
-      res.status(400).json({ error: "Data de vencimento inválida." });
-      return;
+      return res.status(400).json({ error: "Data de vencimento inválida." });
     }
     prismaDate = d;
   }
@@ -97,8 +95,7 @@ export async function novaTarefa(req: Request, res: Response): Promise<void> {
     });
 
     if (!usuarioExiste) {
-      res.status(404).json({ error: "Usuário não encontrado." });
-      return;
+      return res.status(404).json({ error: "Usuário não encontrado." });
     }
 
     const novaTarefa = await prisma.tarefa.create({
