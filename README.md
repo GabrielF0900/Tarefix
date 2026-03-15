@@ -1,5 +1,4 @@
 
-````markdown
 # Tarefix
 
 Tarefix é um sistema full stack de gerenciamento de tarefas com cadastro de usuários, autenticação por credenciais e operações de criação, listagem, edição e exclusão de tarefas. O projeto está organizado em três camadas principais: frontend web, backend em API REST e banco PostgreSQL.
@@ -246,39 +245,39 @@ O backend sobe na porta 3000 e expõe as rotas sob o prefixo /api/auth.
 Descrição:
 Apresenta o formulário de autenticação do usuário, com campos para email e senha, validação de entrada e acesso ao fluxo de registro para novos usuários.
 
-![Tela de Login](docs/images/login.jpg)
+![Tela de Login](/docs/images/login.jpg)
 
 ### 2. Tela de Cadastro
 
 Descrição:
 Exibe o formulário de criação de conta com os campos nome, email e senha. Essa tela representa o ponto de entrada para novos usuários no sistema.
 
-![Tela de Cadastro](docs/images/register.jpg)
+![Tela de Cadastro](/docs/images/register.jpg)
 
 ### 3. Dashboard de Tarefas
 
 Descrição:
 Mostra o painel principal do sistema, com listagem de tarefas, busca textual, indicadores de resumo por status e ações para criar, editar, excluir e acompanhar atividades cadastradas.
 
-![Dashboard de Tarefas](docs/images/dashboard.jpg)
+![Dashboard de Tarefas](/docs/images/dashboard.jpg)
 
 ### 4. Modal de Criação de Tarefa
 
 Descrição:
 Interfaz modal que permite ao usuário criar uma nova tarefa, preenchendo informações como título, descrição, prioridade (Alta, Média ou Baixa), status (Pendente, Em Andamento ou Concluída) e data de vencimento. O modal oferece uma experiência focada e isolada para essa operação.
 
-![Criação de Tarefa](docs/images/novatarefa.jpeg)
+![Criação de Tarefa](/docs/images/novatarefa.jpeg)
 
 ### 5. Modal de Edição de Tarefa
 
 Descrição:
 Interfaz modal que permite editar uma tarefa existente, alterando seu título, descrição, prioridade, status e data de vencimento. Funciona de forma similar ao modal de criação, mas com campos preenchidos com os dados atuais da tarefa.
 
-![Edição de Tarefa](docs/images/editartarefa.jpeg)
+![Edição de Tarefa](/docs/images/editartarefa.jpeg)
 
 ### 6. Modal de Exclusão de Tarefa
 
 Descrição:
 Interfaz modal de confirmação que aparece quando o usuário deseja deletar uma tarefa. O modal avisa sobre a ação irreversível e solicita confirmação antes de executar a exclusão da tarefa do sistema.
 
-![Exclusão de Tarefa](docs/images/excluirtarefa.jpeg)
+![Exclusão de Tarefa](/docs/images/excluirtarefa.jpeg)
