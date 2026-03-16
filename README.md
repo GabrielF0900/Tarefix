@@ -281,3 +281,64 @@ Descrição:
 Interfaz modal de confirmação que aparece quando o usuário deseja deletar uma tarefa. O modal avisa sobre a ação irreversível e solicita confirmação antes de executar a exclusão da tarefa do sistema.
 
 ![Exclusão de Tarefa](/docs/images/excluirtarefa.jpeg)
+
+## Versionamento Git
+
+O projeto utiliza um modelo **simples de branch único**, com desenvolvimento direto na branch principal.
+
+**Características:**
+- Todo código é desenvolvido e commitado diretamente na `master`
+
+### Padrão de Commits
+
+- Mensagens em **português**
+- Prefixos comuns: `Atualização:`, `Modificando`, `Enviando`
+- Sem convenção formal estabelecida
+
+### Fluxo de Trabalho
+
+1. Desenvolve feature diretamente na `master`
+2. Commit com mensagem descritiva
+3. Push para o remoto
+4. CI é executada automaticamente (build + lint)
+
+## Pipeline de CI/CD
+
+O projeto utiliza **GitHub Actions** para integração contínua (CI), com builds automatizados para **Frontend** e **Backend**.
+
+### Configuração do Workflow
+
+**Arquivo:** `.github/workflows/ci.yml`
+
+### Quando é Executado
+
+- ✅ Push nas branches `master` ou `main`
+- ✅ Pull requests para `master` ou `main`
+- ✅ Execução manual (botão no GitHub)
+
+### Controle de Concorrência
+
+- Cancela execuções anteriores quando um novo commit é pushado na mesma branch
+- Evita builds redundantes
+
+### Jobs da Pipeline
+
+A pipeline executa **2 jobs em paralelo**:
+
+#### Job 1: Frontend
+
+1. Checkout do código
+2. Configurar Node.js 20 com cache npm
+3. Instalar dependências (`npm ci`)
+4. Executar linter (`npm run lint`)
+5. Gerar build de produção (`npm run build`)
+6. Executar testes (se existirem)
+
+#### Job 2: Backend
+
+1. Checkout do código
+2. Configurar Node.js 20 com cache npm
+3. Instalar dependências (`npm ci`)
+4. Gerar Prisma Client (`npx prisma generate`)
+5. Compilar TypeScript (`npm run build`)
+6. Executar testes (se existirem)
