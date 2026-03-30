@@ -18,7 +18,7 @@ wait_for_db() {
   echo "Database is ready!"
 }
 
-run_migrations() 
+run_migrations() {
     mode="$1"
     case "$mode" in
         "deploy")
