@@ -16,6 +16,12 @@ COPY . .
 # Build do projeto
 RUN npm run build
 
-EXPOSE 5432
+RUN apk add --no-cache postgresql-client
 
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+EXPOSE 3000
+
+ENTRYPOINT ["sh", "/usr/local/bin/docker-entrypoint.sh"]
 CMD ["node", "dist/server.js"]
