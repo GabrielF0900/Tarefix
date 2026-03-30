@@ -39,7 +39,7 @@ run_migrations() {
     esac
 }
 
-if [ -n "$PRISMA_MIGRATE"]; then
+if [ -n "$PRISMA_MIGRATE" ]; then
  MIGRATE_MODE="$PRISMA_MIGRATE"
 else
   if [ "$NODE_ENV" = "production" ]; then
